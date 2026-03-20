@@ -1,4 +1,4 @@
-import { supabase, Demo } from "@/lib/supabase";
+import { fetchDemoBySlug } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 
 export const revalidate = 0;
@@ -9,17 +9,10 @@ export default async function DemoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-
-  const { data: demo } = await supabase
-    .from("demos")
-    .select("*")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single<Demo>();
+  const demo = await fetchDemoBySlug(slug);
 
   if (!demo) return notFound();
 
-  // Demo html_content is a full HTML page, render it in an iframe to isolate styles
   return (
     <iframe
       srcDoc={demo.html_content}

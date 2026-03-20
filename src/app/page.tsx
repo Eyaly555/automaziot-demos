@@ -1,14 +1,10 @@
-import { supabase, Demo } from "@/lib/supabase";
+import { fetchDemos, Demo } from "@/lib/supabase";
 import Link from "next/link";
 
 export const revalidate = 0;
 
 export default async function Home() {
-  const { data: demos, error } = await supabase
-    .from("demos")
-    .select("slug, title, description, client_name, created_at")
-    .eq("is_active", true)
-    .order("created_at", { ascending: false });
+  const demos = await fetchDemos();
 
   return (
     <div style={styles.body}>
@@ -20,10 +16,9 @@ export default async function Home() {
           System Online
         </div>
 
-        {error && <p style={{color:'red',fontSize:'0.8rem'}}>DEBUG: {error.message} | {error.code} | {error.hint}</p>}
-        {demos && demos.length > 0 ? (
+        {demos.length > 0 ? (
           <div style={styles.grid}>
-            {demos.map((demo: Pick<Demo, "slug" | "title" | "description" | "client_name" | "created_at">) => (
+            {demos.map((demo: Demo) => (
               <Link key={demo.slug} href={`/${demo.slug}`} style={styles.card}>
                 <h3 style={styles.cardTitle}>{demo.title}</h3>
                 {demo.client_name && (
