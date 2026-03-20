@@ -19,7 +19,19 @@ export default async function DemoPage({
 
   if (!demo) return notFound();
 
+  // Demo html_content is a full HTML page, render it in an iframe to isolate styles
   return (
-    <div dangerouslySetInnerHTML={{ __html: demo.html_content }} />
+    <iframe
+      srcDoc={demo.html_content}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        border: "none",
+        position: "fixed",
+        top: 0,
+        left: 0,
+      }}
+      title={demo.title}
+    />
   );
 }
