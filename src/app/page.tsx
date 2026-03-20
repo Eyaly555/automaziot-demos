@@ -4,7 +4,7 @@ import Link from "next/link";
 export const revalidate = 0;
 
 export default async function Home() {
-  const { data: demos } = await supabase
+  const { data: demos, error } = await supabase
     .from("demos")
     .select("slug, title, description, client_name, created_at")
     .eq("is_active", true)
@@ -20,6 +20,7 @@ export default async function Home() {
           System Online
         </div>
 
+        {error && <p style={{color:'red',fontSize:'0.8rem'}}>DEBUG: {error.message} | {error.code} | {error.hint}</p>}
         {demos && demos.length > 0 ? (
           <div style={styles.grid}>
             {demos.map((demo: Pick<Demo, "slug" | "title" | "description" | "client_name" | "created_at">) => (
